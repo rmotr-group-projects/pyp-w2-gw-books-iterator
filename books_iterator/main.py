@@ -4,16 +4,20 @@ from decimal import Decimal
 class Book(object):
     def __init__(self, title, authors, price_amount, price_currency):
         # initialize attributes
-        pass
+        self.title = title
+        self.authors = authors
+        self.price_amount = price_amount
+        self.price_currency = price_currency
 
     @property
     def price(self):
         # create an instance of `Price`, using the book's attributes
-        pass
+        return Price(self.price_amount, self.price_currency)
 
     def __str__(self):
         # check the string format in the unit tests
-        pass
+        # 'Harry Potter (by J. K. Rowling) - USD$20.00'
+        return "{} (by {}) - {}${}".format(self.title, self.authors, self.price_currency, self.price_amount)
 
 
 class Price(object):
@@ -33,47 +37,86 @@ class Price(object):
     }
 
     def __init__(self, amount, currency='USD'):
-        pass
+        self.amount = amount
+        self.currency = currency
+        
 
     def __str__(self):
         pass
 
     def get_currency(self):
-        pass
+        return self.currency
 
     def __add__(self, other):
         # return a new `Price` instance, representing the sum of
         # both given ones
-        pass
+        
+        #???
+        other_amount = other.get_value(self.currency)
+        return Price(self.amount + other_amount, self.currency)
+        
 
     def __eq__(self, other):
         # compare if two prices are equal. Keep in mind that both prices
         # might have different currencies. Use the `.get_value()` function
         # to transform prices to a comparable currency.
-        pass
+        
+        if self.get_value() == other.get_value(self.currency):
+            return True  
+        return False
 
     def __ne__(self, other):
         # opposite to __eq__
-        pass
+        if self.get_value() != other.get_value():
+            return False
+        else:
+            return True
 
     def get_value(self, currency=None):
         # if no currency is given, returns the current price amount. If a
         # different currency is given, handles the price convertion to the
         # given currency. Use the `EXCHANGE_RATES` dict for that.
-        pass
+        if currency == None:
+            return self.amount
+        if self.currency != currency:
+            return self.amount * self.EXCHANGE_RATES[self.currency][currency]
+        return self.amount
 
 
 class BookIterator(object):
     def __init__(self, file_path):
-        pass
+        self.books = read_file_line_by_line(file_path)
+        self.counter = 0
 
     def __iter__(self):
-        pass
-
+        # return BookIterator(self.file_path)
+        self.counter = 0
+        return self
+    
     def __next__(self):
         # make sure each execution of __next__ returns an instance
         # of the `Book` class.
-        pass
+        
+        # if --something--:
+        #     raise StopIteration
+        """
+        my_func(1, 2, 3)
+        t = (1,2,3)
+        my_func(*t)
+        d = {'a':1, 'b': 2}
+        my_func(**d)
+        my_func(a=1, b=2)
+        """
+        if self.counter < len(self.books):
+        
+            current_book = Book(*self.books[self.counter])
+            self.counter += 1
+            return current_book
+        else:
+        
+            raise StopIteration()
+            
+
 
     next = __next__
 
@@ -90,3 +133,30 @@ def read_file_line_by_line(file_path):
     finally:
         file_obj.close()
     return file_lines
+
+
+# class StringIterator():
+#     def __init__(self, string_to_iter):
+#         self.s = string_to_iter
+#         self.pos = 0
+        
+#     def __iter__(self):
+#         self.pos = 0
+#         return self
+        
+#     def __next__(self):
+#         if self.pos < len(self.s):
+#             char = self.s[self.pos]
+#             self.pos +=1
+#             return char
+#         else:
+#             raise StopIteration
+
+#     next = __next__
+            
+# my_iter = StringIterator('stuff')
+# for c in my_iter:
+#     print(c)
+    
+# for c in "stuff":
+#     print(c)
