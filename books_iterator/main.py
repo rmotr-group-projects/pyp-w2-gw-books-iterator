@@ -88,9 +88,8 @@ class BookIterator(object):
             self.count = 0
             raise StopIteration
 
-        next = __next__
-
-
+    next = __next__
+    
 def read_file_line_by_line(file_path):
     with open(file_path, 'r') as f_obj:
         return [line.rstrip().split(',') for line in f_obj.readlines()]
