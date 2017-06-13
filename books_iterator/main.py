@@ -79,6 +79,7 @@ class Price(object):
 class BookIterator(object):
     def __init__(self, file_path):
         self.file_path = file_path
+        self.book_list = read_file_line_by_line(self.file_path)
         self.count = 0
 
     def __iter__(self):
@@ -88,13 +89,12 @@ class BookIterator(object):
     def __next__(self):
         # make sure each execution of __next__ returns an instance
         # of the `Book` class.
-        x = read_file_line_by_line(self.file_path)
-        
-        if self.count == len(x):
+        if self.count >= len(self.book_list):
             raise StopIteration
+        next_book = Book(*self.book_list[self.count])
         self.count += 1
-        for line in x:
-            return Book(*line)
+        
+        return next_book
          
 
     next = __next__
